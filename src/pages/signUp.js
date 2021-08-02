@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { 
-  StyleSheet, Text, View, 
-  TextInput, Image, ImageBackground,
+import {
+  StyleSheet, Text, View, Image,
+  TextInput, ImageBackground,
   TouchableOpacity, Dimensions
 } from 'react-native';
 import { Root, Popup } from 'popup-ui';
 import { Icon } from 'react-native-elements';
 
 import LogoImg from '../images/wish.png';
-import ImageLogin from '../images/paisagem.jpg';
+import BgImg from '../images/paisagem.jpg';
 
-export default function SignIn({ navigation }) {
+export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
   function handleEmail(email) {
     setEmail( email );
@@ -45,9 +44,9 @@ export default function SignIn({ navigation }) {
     }
   };
 
-  return(
+  return (
     <ImageBackground
-      source={ImageLogin}
+      source={BgImg}
       resizeMode="cover"
       style={styles.container}
     >
@@ -57,7 +56,58 @@ export default function SignIn({ navigation }) {
       />
       <Root />
       <View style={styles.login_container}>
-        <Text style={styles.login_text}>Login</Text>
+      <Text style={styles.login_text}>Register</Text>
+        <View style={styles.input_container}>
+          <Icon
+            name='person'
+            type='ionicons'
+            color='#5352ed'
+            style={styles.input_icon}
+          />
+          <TextInput
+            placeholder='First Name'
+            placeholderTextColor='#eee'
+            textContentType='name'
+            autoCapitalize='none'
+            // value={}
+            // onChangeText={() => {}}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.input_container}>
+          <Icon
+            name='person'
+            type='ionicons'
+            color='#5352ed'
+            style={styles.input_icon}
+          />
+          <TextInput
+            placeholder='Last Name'
+            placeholderTextColor='#eee'
+            textContentType='familyName'
+            autoCapitalize='none'
+            // value={}
+            // onChangeText={() => {}}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.input_container}>
+          <Icon
+            name='hashtag'
+            type='font-awesome'
+            color='#5352ed'
+            style={styles.input_icon}
+          />
+          <TextInput
+            placeholder='Nickname'
+            placeholderTextColor='#eee'
+            textContentType='nickname'
+            autoCapitalize='none'
+            // value={}
+            // onChangeText={() => {}}
+            style={styles.input}
+          />
+        </View>
         <View style={styles.input_container}>
           <Icon
             name='email'
@@ -93,19 +143,32 @@ export default function SignIn({ navigation }) {
             style={styles.input}
           />
         </View>
-        <Text style={styles.fp_text}>Forgout Password?</Text>
-        <TouchableOpacity 
+        <View style={styles.input_container}>
+          <Icon
+            name='lock'
+            type='ionicons'
+            color='#5352ed'
+            style={styles.input_icon}
+          />
+          <TextInput
+            placeholder='Confirm Password'
+            placeholderTextColor='#eee'
+            secureTextEntry={true}
+            autoCapitalize='none'
+            value={password}
+            onChangeText={handlePassword}
+            style={styles.input}
+          />
+        </View>
+        <TouchableOpacity
           onPress={setPopUp}
           style={styles.login_btn}
         >
-          <Text style={styles.login_btn_text}>Login</Text>
+          <Text style={styles.login_btn_text}>Cadastrar</Text>
         </TouchableOpacity>
-        <Text style={styles.register_text}>
-          Don't have an account? <Text style={styles.register_btn} onPress={() => navigation.navigate('Register')}>Register</Text>
-        </Text>
-      </View> 
+      </View>
     </ImageBackground>
-  );
+  )
 };
 
 const styles = StyleSheet.create({
@@ -173,23 +236,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     alignSelf: 'center',
-  },
-  fp_text: {
-    marginTop: 10,
-    alignSelf: 'flex-end',
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#5352ed'
-  },
-  register_text: {
-    marginTop: 12,
-    fontSize: 16,
-    fontWeight: 'bold',
-    alignSelf: 'center',
-    color: '#fff',
-  },
-  register_btn: {
-    fontWeight: 'bold',
-    color: '#5352ed',
   },
 });
