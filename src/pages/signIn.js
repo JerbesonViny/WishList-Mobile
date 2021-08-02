@@ -4,6 +4,8 @@ import {
   TextInput, Image, ImageBackground,
   TouchableOpacity, Dimensions
 } from 'react-native';
+import { Root, Popup } from 'popup-ui';
+import { Icon } from 'react-native-elements';
 
 import LogoImg from '../images/wish.png';
 import ImageLogin from '../images/paisagem.jpg';
@@ -21,7 +23,29 @@ export default function SignIn() {
     setPassword( password );
   };
 
-  return (
+  function setPopUp() {
+    if( email.length === 0 || password.length === 0 ){
+      Popup.show({
+        type: 'Danger',
+        title: 'Falha no login',
+        button: true,
+        textBody: 'Preencha todos os campos',
+        buttontext: 'Ok',
+        callback: () => Popup.hide()
+      });
+    } else {
+      Popup.show({
+        type: 'Warning',
+        title: 'Falha no login',
+        button: true,
+        textBody: 'Verifique suas credenciais e tente novamente!',
+        buttontext: 'Ok',
+        callback: () => Popup.hide()
+      });
+    }
+  };
+
+  return(
     <ImageBackground
       source={ImageLogin}
       resizeMode="cover"
@@ -31,36 +55,57 @@ export default function SignIn() {
         source={LogoImg}
         style={styles.logo}
       />
-      {error.length !== 0 && <Text style={styles.errorMessage}>{error.error}</Text>}
+      <Root />
       <View style={styles.login_container}>
-        <Text style={styles.title}>Login</Text>
+        <Text style={styles.login_text}>Login</Text>
         <View style={styles.input_container}>
-          {/*<Icon name='person' type='ionicons' color='#5352ED' />*/}
-          <TextInput 
-            placeholder = "Email"
-            placeholderTextColor = "#aaa"
-            value = {email}
-            onChangeText = {handleEmail}
-            style={styles.inputs}
+          <Icon
+            name='person'
+            type='ionicons'
+            color='#5352ed'
+            style={styles.input_icon}
           />
-          <TextInput 
-            placeholder = "Password"
-            placeholderTextColor = "#aaa"
-            value = {password}
-            onChangeText = {handlePassword}
-            secureTextEntry = {true}
-            style={styles.inputs}
+          <TextInput
+            placeholder='Email'
+            placeholderTextColor='#eee'
+            keyboardType='email-address'
+            textContentType='emailAddress'
+            autoCapitalize='none'
+            value={email}
+            onChangeText={handleEmail}
+            style={styles.input}
           />
-          <TouchableOpacity
-            style = {[styles.inputs, styles.submit_btn]}
-          >
-            <Text style={styles.text_btn}>Entrar</Text>
-          </TouchableOpacity>
-          <Text style={styles.text_register}>
-            Don't have an account? <TouchableOpacity><Text style={styles.text_register_purple}>Register</Text></TouchableOpacity>
-          </Text>
         </View>
-      </View>  
+        <View style={styles.input_container}>
+          <Icon
+            name='lock'
+            type='ionicons'
+            color='#5352ed'
+            style={styles.input_icon}
+          />
+          <TextInput
+            placeholder='Password'
+            placeholderTextColor='#eee'
+            secureTextEntry={true}
+            autoCapitalize='none'
+            value={password}
+            onChangeText={handlePassword}
+            style={styles.input}
+          />
+        </View>
+        <Text style={styles.fp_text}>Forgout Password?</Text>
+        <TouchableOpacity 
+          onPress={setPopUp}
+          style={styles.login_btn}
+        >
+          <Text style={styles.login_btn_text}>Login</Text>
+        </TouchableOpacity>
+        <Text style={styles.register_text}>
+          Don't have an account? <Text style={styles.register_btn}>
+            Register
+          </Text>
+        </Text>
+      </View> 
     </ImageBackground>
   );
 };
@@ -74,75 +119,79 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    
-    height: '41%',
-    width: '100%',
 
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    paddingTop: 10,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
 
     backgroundColor: '#2c2727',
-    opacity: 0.9
+    opacity: 0.9,
   },
   input_container: {
-    alignItems: 'center'
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#444',
+    marginTop: 10,
   },
   logo: {
     position: 'absolute',
     top: Dimensions.get('screen').height * 0.05,
     alignSelf: 'center',
-
     height: 220, 
     width: 220,
   },
-  submit_btn: {
-    backgroundColor: '#5352ED',
-    width: 200,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  text_btn: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold'
-  },
-  text_register: {
-    color: '#fff',
-    fontWeight: 'bold'
-  },
-  text_register_purple: {
-    color: '#5352ED'
-  },
-  title: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 24,
-    marginVertical: 20,
-    marginLeft: 40
-  },
-  title_app: {
-    marginBottom: 300,
-    marginHorizontal: 0,
-    color: '#B433FF',
-    fontSize: 30,
-    fontWeight: 'bold'
-  },
-  inputs: {
-    height: 60,
-    width: 330,
-    backgroundColor: '#444',
-    borderRadius: 15,
-    marginVertical: 10,
-    padding: 15,
+  login_text: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#aaa'
+    marginTop: 12,
+    marginBottom: 4,
+
+    color: '#fff',
   },
-  errorMessage: {
-  textAlign: 'center',
-  color: '#ce2029',
-  fontSize: 16,
-  marginBottom: 15,
-  marginHorizontal: 20
-  }
+  input_icon: {
+    paddingHorizontal: 8,
+  },
+  input: {
+    height: 40,
+    flex: 1,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#eee',
+  },
+  login_btn: {
+    backgroundColor: '#5352ed',
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  login_btn_text: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: "bold",
+    alignSelf: 'center',
+  },
+  fp_text: {
+    marginTop: 10,
+    alignSelf: 'flex-end',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#5352ed'
+  },
+  register_text: {
+    marginTop: 12,
+    fontSize: 16,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    color: '#fff',
+  },
+  register_btn: {
+    fontWeight: 'bold',
+    color: '#5352ed'
+  },
 });
