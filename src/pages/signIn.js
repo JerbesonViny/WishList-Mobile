@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   StyleSheet, Text, View, 
   TextInput, Image, ImageBackground,
@@ -10,10 +10,14 @@ import { Icon } from 'react-native-elements';
 import LogoImg from '../images/wish.png';
 import ImageLogin from '../images/paisagem.jpg';
 
+import api from '../services/api';
+import apiJ from '../services/apiJ';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function SignIn({ navigation }) {
+  const [animals, setAnimals] = useState([]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
   function handleEmail(email) {
     setEmail( email );
@@ -23,8 +27,29 @@ export default function SignIn({ navigation }) {
     setPassword( password );
   };
 
-  function setPopUp() {
+  async function onLogin() {
     if( email.length === 0 || password.length === 0 ){
+      setPopUp('Danger');
+
+      return false
+    };
+
+    try {
+      const response = await api.post('/login/', {
+        email: email,
+        password: password,
+      });
+
+      await AsyncStorage.setItem( "token", response.data.token );
+
+      setPopUp('Success');
+    } catch (error) {
+      setPopUp('Warning');
+    };
+  };
+
+  function setPopUp(type) {
+    if( type === 'Danger' ){
       Popup.show({
         type: 'Danger',
         title: 'Falha no login',
@@ -33,7 +58,7 @@ export default function SignIn({ navigation }) {
         buttontext: 'Ok',
         callback: () => Popup.hide()
       });
-    } else {
+    } else if( type === 'Warning' ) {
       Popup.show({
         type: 'Warning',
         title: 'Falha no login',
@@ -42,8 +67,32 @@ export default function SignIn({ navigation }) {
         buttontext: 'Ok',
         callback: () => Popup.hide()
       });
+    } else {
+      Popup.show({
+        type: 'Success',
+        title: 'Login efetuado',
+        button: true,
+        textBody: 'Login efetuado com sucesso!',
+        buttontext: 'Ok',
+        callback: () => Popup.hide()
+      });
+    };
+  };
+
+  async function loadAnimals() {
+    try {
+      const response = await apiJ.get('/animals');
+      setAnimals(response.data);
+
+      console.log(response.data.data[0])
+    } catch (error) {
+      alert(error)
     }
   };
+
+  useEffect(() => {
+    loadAnimals()
+  }, []);
 
   return(
     <ImageBackground
@@ -95,7 +144,7 @@ export default function SignIn({ navigation }) {
         </View>
         <Text style={styles.fp_text}>Forgout Password?</Text>
         <TouchableOpacity 
-          onPress={setPopUp}
+          onPress={onLogin}
           style={styles.login_btn}
         >
           <Text style={styles.login_btn_text}>Login</Text>
