@@ -6,12 +6,12 @@ import {
 } from 'react-native';
 import { Root, Popup } from 'popup-ui';
 import { Icon } from 'react-native-elements';
+import * as Google from "expo-google-app-auth";
 
 import LogoImg from '../images/wish.png';
 import ImageLogin from '../images/paisagem.jpg';
 
 import api from '../services/api';
-import apiJ from '../services/apiJ';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SignIn({ navigation }) {
@@ -37,7 +37,7 @@ export default function SignIn({ navigation }) {
     try {
       const response = await api.post('/login/', {
         email: email,
-        password: password,
+        password: password
       });
 
       await AsyncStorage.setItem( "token", response.data.token );
@@ -79,20 +79,20 @@ export default function SignIn({ navigation }) {
     };
   };
 
-  async function loadAnimals() {
+
+  async function googleLogin() {
     try {
-      const response = await apiJ.get('/animals');
-      setAnimals(response.data);
+      const response = await Google.logInAsync({
+        androidClientId: "160631663558-o4rdtm9hrvh2or41fh6gt5enpv126avh.apps.googleusercontent.com",
+        scopes: ["profile", "email"]
+      });
 
-      console.log(response.data.data[0])
-    } catch (error) {
-      alert(error)
-    }
-  };
+      console.log(response.user)
 
-  useEffect(() => {
-    loadAnimals()
-  }, []);
+    } catch (e) {
+      console.log("error", e);
+    };
+  }
 
   return(
     <ImageBackground
@@ -142,12 +142,25 @@ export default function SignIn({ navigation }) {
             style={styles.input}
           />
         </View>
-        <Text style={styles.fp_text}>Forgout Password?</Text>
         <TouchableOpacity 
           onPress={onLogin}
           style={styles.login_btn}
         >
           <Text style={styles.login_btn_text}>Login</Text>
+        </TouchableOpacity>
+        <Text style={styles.fp_text}>Forgout Password?</Text>
+        
+        <TouchableOpacity 
+          onPress={onLogin}
+          style={styles.login_btn}
+          onPress={googleLogin}
+        >
+          <Icon
+            name='google'
+            type='font-awesome'
+            color='#FFF'
+            style={styles.input_icon}
+          />
         </TouchableOpacity>
         <Text style={styles.register_text}>
           Don't have an account? <Text style={styles.register_btn} onPress={() => navigation.navigate('Register')}>Register</Text>

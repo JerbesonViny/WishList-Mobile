@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://wishlistli.herokuapp.com',
+  baseURL: 'https://group-cycling-backend.herokuapp.com',
 });
 
 export default api;
